@@ -1,0 +1,206 @@
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<section class="content-header">
+		<h1>Asignación de Oficiales</h1>
+		<ol class="breadcrumb">
+			<li><a><i class="fa fa-book"></i>Zonas Viales</a></li>
+			<li class="active">Asignación de Oficiales</li>
+		</ol>
+	</section>
+
+	<section class="content">
+	
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<div class="box box-danger">
+					<div class="box-header with-border text-center pointer"><h3 class="box-title">Asignación e Intercambio de Oficiales</h3>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<form role="form" name="searchAreaForm" class="col-md-offset-1 col-md-10">
+								<fieldset class="scheduler-border">
+									<legend class="scheduler-border legendStyle">
+										<a data-toggle="collapse" data-target="#divBusqueda" style="color: black" ng-click="toggleAuxiliarForm()">
+											Búsqueda de oficiales
+										</a>
+									</legend>
+									<div class="row collapse" id="divBusqueda">
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="numSerie">Placa:</label>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="fa fa-id-card-o"></i>
+													</span>
+													<input type="text" class="form-control input-sm" id="placa" name="placa" ng-model="oficial.placa" maxlength="45">
+												</div>
+											</div>
+										</div>
+										
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="numSim">Nombre:</label>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="fa fa-user-circle"></i>
+													</span>
+													<input type="text" class="form-control input-sm" id="nombre" name="nombre" ng-model="oficial.nombre" maxlength="45">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="numSim">Apellido paterno:</label>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="fa fa-user-circle"></i>
+													</span>
+													<input type="text" class="form-control input-sm" id="paterno" name="paterno" ng-model="oficial.paterno"  maxlength="45">
+												</div>
+											</div>
+										</div>
+										
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="numSim">Apellido materno:</label>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="fa fa-user-circle"></i>
+													</span>
+													<input type="text" class="form-control input-sm" id="materno" name="materno" ng-model="oficial.materno"  maxlength="45">
+												</div>
+											</div>
+										</div>
+										
+										<div class="col-md-12 text-center">
+<!-- 											<button class="btn btn-md btn-danger" ng-click="changeZona(null, null, null, true)">Buscar</button> -->
+											<button class="btn btn-md btn-danger" ng-click="searchOfficer(oficial)">Buscar</button>
+										</div>
+									</div>
+									<br>
+									<div class="row" ng-show="foundOfficers.length>0 && auxiliarForm">
+										<div class="col-md-offset-1 col-md-2">
+											Oficiales encontrados: {{(foundOfficers | filter : view.searchSomething).length}}
+										</div>
+										<div class="col-md-offset-5 col-md-3">
+											<div class="input-group pull-right">
+							        			<input type="text" id="searchsomething" class="form-control input-sm" placeholder="Buscar por filtro" ng-model="view.searchSomething">
+												<div class="input-group-addon"><i class="fa fa-search"></i></div>
+							     			</div>
+										</div>
+										<div class="col-md-offset-1 col-md-10 table-responsive">
+											<table class="table table-striped table-hover table-condensed header-fixed">
+												<thead>
+													<tr>
+														<th width="15%">ENLISTAR</th>
+														<th width="25%" sort order="'nombreZonaVial'" by="order" reverse="reverse">ZONA VIAL</th>
+														<th width="20%" sort order="'oficiales[0].empPlaca'" by="order" reverse="reverse">PLACA</th>
+														<th width="35%" sort order="'oficiales[0].empNombre'" by="order" reverse="reverse">NOMBRE</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr dir-paginate="zonaOfficer in foundOfficers | orderBy:order:reverse | filter:view.searchSomething | itemsPerPage: view.rowsPerPage">
+														<td align="center"  width="20%">
+															<button class="btn btn-sm btn-danger" ng-click="changeZona(null, null, zonaOfficer, true)"><i class="fa fa-indent" aria-hidden="true"></i></button>
+														</td>
+														<td width="30%">{{zonaOfficer.nombreZonaVial}}</td>
+														<td width="20%">{{zonaOfficer.oficiales[0].empPlaca}}</td>
+														<td width="35%">{{zonaOfficer.oficiales[0].empNombre + ' ' + zonaOfficer.oficiales[0].empApePaterno + ' ' + zonaOfficer.oficiales[0].empApeMaterno}} 
+													</tr>
+													<tr ng-if="(zonaOfficer | filter:view.searchSomething).length < 1"><td colspan="4" class="text-center"><h4>No se encontraron coincidencias</h4></td></tr>
+												</tbody>
+											</table>
+										</div>
+										<div class="container-fluid col-md-offset-1 col-md-10">
+											<div class="fixed-table-pagination" style="display:block;">
+												<rows-per-page rows="view.rowsPerPage" filtro="view.searchSomething" array="infracciones"></rows-per-page>
+												
+												<div class="pull-right pagination">
+													<dir-pagination-controls class="pagination"></dir-pagination-controls>
+												</div>
+											</div>
+										</div>
+									</div>
+								</fieldset>
+							</form>
+						</div>
+						<fieldset class="scheduler-border">
+							<legend class="scheduler-border legendStyle">
+								<a data-toggle="collapse" data-target="#divBusqueda" style="color: black">
+									Asignaciones
+								</a>
+							</legend>
+							<div class="row">
+								<div class="col-md-offset-2 col-md-3">
+									<div class="form-group">
+										<label for="zona1">*Zona Vial 1:</label>
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="fa fa-users"></i>
+											</span>
+											<select ng-options="item as item.nombreZonaVial for item in zonasVialesSelect[0] track by item.idZonaVial"
+											id="zona1"
+											name="zona1"
+											class="form-control"
+											ng-model="zonaSelect1"
+											ng-change="changeZona(0, 1, zonaSelect1, false)">
+												<option ng-show="zonaSelect1==null" value="">Seleccione</option>
+											</select>
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-offset-2 col-md-3">
+									<div class="form-group">
+										<label for="marca">*Zona Vial 2:</label>
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="fa fa-users"></i>
+											</span>
+											<select ng-options="item as item.nombreZonaVial for item in zonasVialesSelect[1] track by item.idZonaVial"
+											id="marca"
+											name="marca"
+											class="form-control"
+											ng-model=zonaSelect2
+											ng-change="changeZona(1, 0, zonaSelect2, false)"
+											ng-disabled="zonaSelect1 == null && zonasModels[0].oficiales == undefined">
+											<option ng-show="zonaSelect2==null" value="">Seleccione</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<br/>
+							
+							<dnd-lists
+								col="col-md-5"
+								max-height="25vh"
+								model="zonasModels"
+								nb-list="nombreZonaVial"
+								nb-item="oficiales"
+								nb-texts="Placa , Nombre, Appellido"
+								nb-labels="empPlaca, empNombre, empApePaterno"
+								flag-success="flag"
+								model-aux=""
+								model-aux=""
+								required-list="false"
+								img-cursor="static/dist/img/police.png">
+							</dnd-lists>
+						</fieldset>
+						
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<button class="btn btn-md btn-danger" ng-click=persistOfficers() ng-show="zonasModels[0] != null && zonasModels[1] != null">Guardar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+
+</html>

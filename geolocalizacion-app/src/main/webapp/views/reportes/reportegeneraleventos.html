@@ -1,0 +1,256 @@
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<section class="content-header">
+		<h1>Reporte General de Eventos por Zonas Viales</h1>
+		<ol class="breadcrumb">
+			<li><a><i class="fa fa-book"></i>Gráficas y Reportes</a></li>
+			<li class="active">Clasificación de Reportes</li>
+			<li class="active">Reporte General de Eventos</li>
+		</ol>
+	</section>
+
+	<section class="content">
+<!-- 		{{dataRequest}} -->
+		<div class="row main">
+			<div class="col-md-offset-1 col-md-10">
+				<div class="box box-danger">
+					<div class="box-header with-border text-center pointer">
+						<h3 class="box-title">Parámetros del Reporte</h3>
+					</div>
+<!-- 					{{report}} -->
+					<div class="box-body">
+						<div class="row">
+							<form role="form" name="reportForm" class="col-md-offset-1 col-md-10">
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group" ng-class="{'has-error': reportForm.zonaVialReporteGeneral.$invalid && reportForm.zonaVialReporteGeneral.$dirty}">
+											<label for="zonaVialReporteGeneral">Zona Vial:</label>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="fa fa-map-pin"></i>
+												</span>
+												<select class="form-control"
+													select-picker
+													multiple
+													data-actions-box="true"
+													data-selected-text-format="count > 6"
+													id="zonaVialReporteGeneral"
+													name="zonaVialReporteGeneral"
+													ng-model="dataRequest.zonasViales"
+													ng-required="true"
+													ng-options="z.idZonaVial as z.nombreZonaVial for z in dataForm.zonasViales">
+												</select>
+											</div>
+											<div ng-show="reportForm.zonaVialReporteGeneral.$error.required && reportForm.zonaVialReporteGeneral.$dirty" ng-style="{color:'red'}">
+												La zona es requerida
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="tipoEventoReporteGeneral">Tipo de Evento:</label>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="fa fa-hand-o-right"></i>
+												</span>
+												<select 
+												class="form-control" 
+												select-picker
+												multiple
+												data-actions-box="true"
+											    data-selected-text-format="count > 6"
+												id="tipoEventoReporteGeneral" 
+												name="tipoEventoReporteGeneral" 
+												ng-model="dataRequest.tipoEventos" 
+												ng-options="z.idTipoEvento as z.nombreTipoEvento for z in dataForm.tipoEventos"
+												ng-change="changeTipoEvento()">
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group" ng-class="{'has-error': reportForm.tipoInfraccionReporteGeneral.$invalid && reportForm.tipoInfraccionReporteGeneral.$dirty}">
+											<label for="tipoInfraccionReporteGeneral">Tipo de Infracción:</label>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="fa fa-hand-o-right"></i>
+												</span>
+												<select 
+												class="form-control" 
+												select-picker
+												multiple
+												data-actions-box="true"
+											    data-selected-text-format="count > 6"
+												id="tipoInfraccionReporteGeneral" 
+												name="tipoInfraccionReporteGeneral" 
+												ng-model="dataRequest.tipoInfracciones" 
+												ng-required="tipoInfraccionRequired"
+												ng-options="z.codigoTipoInfraccion as z.nombreTipoInfraccion for z in dataForm.tipoInfracciones">
+												</select>
+											</div>
+											<div ng-show="reportForm.tipoInfraccionReporteGeneral.$error.required && reportForm.tipoInfraccionReporteGeneral.$dirty"
+												ng-style="{color:'red'}">El tipo de infraccion es requerido
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row" id="divBusqueda">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="fIReporteGeneral">Fecha Inicial:</label>
+											<div class="input-group"
+												datetime-picker
+												idioma-dtp="{{currentLanguage}}"
+												options="dateTimePickerOptions"
+												ng-model="dataRequest.fechaInicial">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input class="form-control inputFecha" readonly id="fIReporteGeneral" name="fIReporteGeneral"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="fFReporteGeneral">Fecha Final:</label>
+											<div class="input-group"
+												datetime-picker
+												idioma-dtp="{{currentLanguage}}"
+												options="dateTimePickerOptions"
+												ng-model="dataRequest.fechaFinal">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input class="form-control inputFecha" readonly id="fFReporteGeneral" name="fFReporteGeneral"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="tipoEventoReporteGeneral">Login:</label>
+											<div class="input-group">
+												<div class="input-group">
+													<switcher class="swTeclo"
+														id-check="checkTest3"
+														ng-model="dataRequest.loggedOfficers"
+														ng-disabled="isDisabled"
+														true-label="<i class='fa fa-check-circle'></i>"
+														true-value="'1'"
+														false-label="<i class='fa fa-times-circle'></i>"
+														false-value="'2'">
+													</switcher>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="row ">
+							<div class="col-md-1 text-center">
+								<a href='#/clasificacionreportes' role="button" class="btn btn-danger"><i class="fa fa-list-ul" aria-hidden="true"></i></a>
+							</div>
+							<div class="col-md-10 text-center">
+								<button class="btn btn-md btn-danger" type="button" ng-click="getReportData()">Buscar</button>
+							</div>
+							<div class="col-md-1 text-center">
+								<button role="button" class="btn btn-danger popovers" data-toggle="popover" 
+								data-html="true" data-original-title="Otros reportes" data-container=".main" data-placement="right" viewport="container" data-trigger="focus"
+								data-content="<a href='#/reporteGeneralEventosOficialesDispositivos'>Reporte general por oficiales y dispositivos</a>"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row"  ng-show="report.length>0">
+			<div class="col-md-12">
+				<div class="box box-danger">
+					<div class="box-header with-border text-center pointer">
+						<div class="row">
+							<div class="col-md-6 text-left">
+								<h3 class="box-title">Registros encontrados: {{(report | filter : table.searchSomething).length}}</h3>
+							</div>
+							<div class="col-md-offset-2 col-md-3 text-right">
+								<div class="input-group">
+				        			<input type="text" id="searchsomething" class="form-control input-sm" placeholder="Buscar por filtro" ng-model="table.searchSomething">
+									<div class="input-group-addon"><i class="fa fa-search"></i></div>
+				     			</div>
+							</div>
+							<div class="col-md-1 col-xs-1 pull-right">
+		     				<a ng-click="downloadReporte(showForTotal)">
+								<span class="pull-right "><img src="static/dist/img/excel.png"></span>
+							</a>
+		     			</div> 
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-12 table-responsive">
+								<table class="table table-striped table-hover table-condensed header-fixed">
+									<thead>
+										<tr>
+											<th align="center" sort order="'empleado.empNombre'" by="table.order" reverse="table.reverse">EMPLEADO</th>
+											<th align="" sort order="'dispositivoMovil.numSerie'" by="table.order" reverse="table.reverse">DISP. NUM. SERIE</th>
+<!-- 											<th width="10%" sort order="'latitudGps'" by="table.order" reverse="table.reverse">LATITUD</th> -->
+<!-- 											<th width="10%" sort order="'longitudGps'" by="table.order" reverse="table.reverse">LONGITUD</th> -->
+											
+											<th align="center" sort order="'tipoEventoGps.nombreTipoEvento'" by="table.order" reverse="table.reverse">TIPO DE EVENTO</th>
+											<th align="center" sort order="'fechaHoraEvento'" by="table.order" reverse="table.reverse">FECHA DE EVENTO</th>
+											<th align="center" sort order="'direccion'" by="table.order" reverse="table.reverse">DIRECCIÓN</th>
+											<th align="center" sort order="'numInfraccion'" by="table.order" reverse="table.reverse" ng-if="tipoInfraccionRequiredPostPet">INFRACCIÓN</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr dir-paginate="r in report | orderBy:table.order:table.reverse | filter:table.searchSomething | itemsPerPage: table.rowsPerPage">
+											<td align="center"><span
+												data-original-title="{{r.empleado.empNombre + ' ' + r.empleado.empApePaterno + ' ' + r.empleado.empApeMaterno}}" 
+												data-container="body" 
+												data-toggle="tooltip" 
+												data-placement="right" title="">{{r.empleado.empPlaca}}</span></td>
+											<td align="center"><span
+												data-html="true"
+												data-original-title="N. SIM: {{r.dispositivoMovil.numSim}} </br>IP: {{r.dispositivoMovil.numIp}}" 
+												data-container="body" 
+												data-toggle="tooltip" 
+												data-placement="right" title="">{{r.dispositivoMovil.numSerie}}</span></td>
+<!-- 											<td width="10%">{{r.latitudGps}}</td> -->
+<!-- 											<td width="10%">{{r.longitudGps}}</td> -->
+											
+											<td align="center">{{r.tipoEvento.nombreTipoEvento}}</td>
+											<td align="center">{{r.fechaHoraEvento}}</td>
+											<td align="left">
+												<span
+												data-html="true"
+												data-original-title="Latitud: {{r.latitudGps}} </br>Longitud: {{r.longitudGps}}" 
+												data-container="body" 
+												data-toggle="tooltip" 
+												data-placement="right" title="">{{r.direccion}}</span>
+											</td>
+											<td align="center" ng-if="tipoInfraccionRequiredPostPet">{{r.numInfraccion}}</td>
+										</tr>
+									</tbody>
+								</table>
+<!-- 								{{report}} -->
+							</div>
+							<div class="container-fluid col-md-offset-1 col-md-10">
+								<div class="fixed-table-pagination" style="display:block;">
+									<rows-per-page rows="table.rowsPerPage" filtro="table.searchSomething" array="infracciones"></rows-per-page>
+									
+									<div class="pull-right pagination">
+										<dir-pagination-controls class="pagination"></dir-pagination-controls>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+
+</html>

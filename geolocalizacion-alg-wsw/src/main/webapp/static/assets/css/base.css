@@ -1,0 +1,16 @@
+	/* ----------------------------------------------------- */
+	/* _______________________ BASE _______________________ */
+	
+	/* ANGULAR BOOTSTRAP */
+	@import url('base/angular-bootstrap.css');
+	
+	/* ADMIN LTE */
+	@import url('base/AdminLTE.css');
+	
+	/* Fonts utilizados en la aplicación (iconos) */
+	@import url('../fonts/font-awesome/css/font-awesome.min.css');
+	@import url('../fonts/glyphicons/glyphicons.css');
+	
+	/* Componentes de aplicación IMPORTANTE */
+	@import url('components.css');
+	

@@ -1,0 +1,208 @@
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<section class="content-header">
+		<h1>Asignación de Dispositivos</h1>
+		<ol class="breadcrumb">
+			<li><a><i class="fa fa-book"></i>Zonas Viales</a></li>
+			<li class="active">Asignación de Dispositivos</li>
+		</ol>
+	</section>
+
+	<section class="content">
+	
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<div class="box box-danger">
+					<div class="box-header with-border text-center pointer"><h3 class="box-title">Asignación e Intercambio de Dispositivos</h3>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<form role="form" name="searchAreaForm" class="col-md-offset-1 col-md-10">
+								<fieldset class="scheduler-border">
+									<legend class="scheduler-border legendStyle">
+										<a data-toggle="collapse" data-target="#divBusqueda" style="color: black">
+											Búsqueda de dispositivo
+										</a>
+									</legend>
+									<div class="row collapse" id="divBusqueda">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="numSerie">Número de Serie:</label>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="fa fa-sort-numeric-asc"></i>
+													</span>
+													<input type="text" class="form-control" id="numSerie" name="numSerie" ng-model="dispositivo.numSerie" maxlength="45" integer-number>
+												</div>
+											</div>
+										</div>
+										
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="numSim">Número Sim:</label>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="fa fa-cog"></i>
+													</span>
+													<input type="text" class="form-control" id="numSim" name="numSim" ng-model="dispositivo.numSim" maxlength="45">
+												</div>
+											</div>
+										</div>
+										
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="numSim">IP:</label>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="fa fa-map-marker"></i>
+													</span>
+													<input type="text" class="form-control" id="numIp" name="numIp" ng-model="dispositivo.numIp"  maxlength="45">
+												</div>
+											</div>
+										</div>
+<!-- 										<div class="col-md-3"> -->
+<!-- 											<div class="form-group"> -->
+<!-- 												<label for="combo">Resultado en combo:</label> -->
+<!-- 												<div class="input-group"> -->
+<!-- 													<span class="input-group-addon"><i class="fa fa-asterisk"></i></span> -->
+<!-- 													<select class="form-control" id="combo" name="combo" ng-model="dispositivo.combo"> -->
+<!-- 														<option value="0">Izquiero</option> -->
+<!-- 														<option value="1" selected>Derecho</option> -->
+<!-- 													</select> -->
+<!-- 												</div> -->
+<!-- 											</div> -->
+<!-- 										</div> -->
+										<div class="col-md-12 text-center">
+											<button class="btn btn-md btn-danger" ng-click="changeZona(null, null, null, true)">Buscar</button>
+										</div>
+									</div>
+								</fieldset>
+							</form>
+						</div>
+						<div class="row">
+							<div class="col-md-offset-2 col-md-3">
+								<div class="form-group">
+									<label for="zona1">*Zona Vial 1:</label>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-map-pin"></i>
+										</span>
+										<select ng-options="item as item.nombreZonaVial for item in zonasVialesSelect[0] track by item.idZonaVial"
+										id="zona1"
+										name="zona1"
+										class="form-control"
+										ng-model="zonaSelect1"
+										ng-change="changeZona(0, 1, zonaSelect1, false)">
+										<option ng-show="zonaSelect1==null" value="">Seleccione</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-offset-2 col-md-3">
+								<div class="form-group">
+									<label for="marca">*Zona Vial 2:</label>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="fa fa-map-pin"></i>
+										</span>
+										<select ng-options="item as item.nombreZonaVial for item in zonasVialesSelect[1] track by item.idZonaVial"
+										id="marca"
+										name="marca"
+										class="form-control"
+										ng-model=zonaSelect2
+										ng-change="changeZona(1, 0, zonaSelect2, false)"
+										ng-disabled="zonaSelect1==null">
+										<option ng-show="zonaSelect2==null" value="">Seleccione</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+<!-- 						<div class="row" id="repeatZonasModels" detect-dimension size-height="heightDiv"> -->
+<!-- 							<div class="col-md-12"> -->
+<!-- 								<div ng-repeat="list in zonasModels track by $index"> -->
+<!-- 									<div class="col-md-5"> -->
+<!-- 										<div ng-show="list!=null"> -->
+<!-- 											<fieldset class="scheduler-border"> -->
+<!-- 												<legend class="scheduler-border"> -->
+<!-- 													<h4 class="box-title">{{list.nombreZonaVial+'('+ list.dispositivos.length +(list.dispositivos.length==1 ? ' dispositivo' : ' dispositivos') + -->
+<!-- 													(filtered.length != list.dispositivos.length || list.query.length > 0 ? (', '+ filtered.length + (filtered.length==1 ? ' dispositivo filtrado' : ' dispositivos filtrados')+ ')') : ')')}}</h4> -->
+<!-- 													<div class="form-group"> -->
+<!-- 														<div class="input-group"> -->
+<!-- 															<span class="input-group-addon"><i class="fa fa-search"></i></span> -->
+<!-- 															<input type="text" id="query" class="form-control" ng-model="list.query"/> -->
+<!-- 														</div> -->
+<!-- 													</div> -->
+<!-- 												</legend> -->
+<!-- 												<div class="panel-body multiSelectItem scrollable-content col-md-12"> -->
+<!-- 													<ul dnd-list dnd-drop="onDrop(list, item, index)"> -->
+<!-- 													    <li ng-repeat="item in list.dispositivos | filter: list.query as filtered" -->
+<!-- 													        dnd-draggable="getSelectedItemsIncluding(list, item)" -->
+<!-- 													        dnd-dragstart="onDragstart(list, event)" -->
+<!-- 													        dnd-moved="onMoved(list)" -->
+<!-- 													        dnd-dragend="list.dragging = false" -->
+<!-- 													        dnd-selected="item.selected = !item.selected" -->
+<!-- 													        ng-class="{'selected': item.selected}" -->
+<!-- 													        ng-hide="list.dragging && item.selected"> -->
+<!-- 													        <p><strong>Serie: </strong><span>{{item.numSerie}}</span></p> -->
+<!-- 													        <p><strong>Sim: </strong><span>{{item.numSim}}</span></p> -->
+<!-- 													        <p><strong>IP: </strong><span>{{item.numIp}}</span></p> -->
+<!-- 													    </li> -->
+<!-- 													</ul> -->
+<!-- 												</div> -->
+<!-- 											</fieldset> -->
+<!-- 										</div> -->
+<!-- 									</div> -->
+<!-- 									<div class="col-md-2 text-center middle-list-buttons" ng-if="$index==0" style="height:{{heightDiv}}"> -->
+<!-- 										<button class="btn btn-md btn-danger" ng-click=hardPush(0,1) ng-show="zonasModels[0] != null && zonasModels[1] != null"> -->
+<!-- 											<i class="fa fa-angle-double-right"></i> -->
+<!-- 										</button> -->
+<!-- 										<button class="btn btn-md btn-danger" ng-click=hardPush(1,0) ng-show="zonasModels[0] != null && zonasModels[1] != null"> -->
+<!-- 											<i class="fa fa-angle-double-left"></i> -->
+<!-- 										</button> -->
+<!-- 									</div> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+						<br/>
+						
+						<br/>
+						
+						<dnd-lists
+							col="col-md-5"
+							max-height="25vh"
+							model="zonasModels"
+							nb-list="nombreZonaVial"
+							nb-item="dispositivos"
+							nb-texts="No. Serie: , No. Sim: , IP: "
+							nb-labels="numSerie, numSim, numIp"
+							flag-success="flag"
+							required-list="false"
+							img-cursor="static/dist/img/handheld.png">
+						</dnd-lists>
+						
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<button class="btn btn-md btn-danger" ng-click="persistDispositivos()" ng-show="zonasModels[0] != null && zonasModels[1] != null">Guardar</button>
+							</div>
+						</div>
+					</div>
+		
+<!-- 						{{zonasModels[0].originalList}} -->
+<!-- 						{{zonasModels[1].originalList}} -->
+<!-- 						{{zonaSelect1}} -->
+						<!--{{zonasModels}}-->
+						<!--{{objPrueba}}-->
+						<!--{{vo}}-->
+<!-- 					</div> -->
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+
+</html>

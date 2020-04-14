@@ -1,0 +1,129 @@
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<section class="content-header">
+		<h1>Infracciones Diarias Por Zona Vial</h1>
+		<ol class="breadcrumb">
+			<li><a><i class="fa fa-book"></i>Gráficas y Reportes</a></li>
+			<li class="active">Clasificación de Gráficas</li>
+			<li class="active">Infracciones Diarias Por Zona Vial</li>
+		</ol>
+	</section>
+
+	<section class="content">
+		
+		<div class="row nigga">
+			<div class="col-md-offset-3 col-md-6">
+				<div class="box box-danger">
+					<div class="box-header with-border text-center pointer">
+						<h3 class="box-title">Parámetros de Gráfica</h3>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<form role="form" name="searchAreaForm" class="col-md-offset-1 col-md-10">
+								<div class="row" id="divBusqueda">
+									<div class="col-sm-6">
+										<div class="form-group" ng-class="{'has-error': searchAreaForm.zonaVial.$invalid && searchAreaForm.zonaVial.$dirty}">
+											<label for="zonaVial">Zona Vial:</label>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="fa fa-map-marker"></i>
+												</span>
+												<select class="form-control" id="zonaVial" name="zonaVial" ng-model="gForm.zonaId" ng-required="true"
+													ng-options="z.idZonaVial as z.nombreZonaVial for z in zonasViales">
+													<option value="">Seleccione</option>
+												</select>
+											</div>
+											<div ng-show="searchAreaForm.zonaVial.$error.required && searchAreaForm.zonaVial.$dirty"
+												ng-style="{color:'red'}">La zona es requerida
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group" ng-class="{'has-error': searchAreaForm.diaa.$invalid && searchAreaForm.diaa.$dirty}">
+											<label for="zonaVial">Día:</label>
+											<div class="input-group"
+												datetime-picker
+												idioma-dtp="{{currentLanguage}}"
+												options="dateTimePickerOptions"
+												ng-model="gForm.dia">
+												<div class="input-group-addon">
+													<i class="fa fa-calendar"></i>
+												</div>
+												<input class="form-control inputFecha" readonly id="diaa" name="diaa" ng-required="true"/>
+											</div>
+											<div ng-show="searchAreaForm.diaa.$error.required && searchAreaForm.diaa.$dirty"
+												ng-style="{color:'red'}">La fecha es requerida
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="row">
+							<div class="col-md-1 text-center">
+								<a href='#/clasificaciongraficas' role="button" class="btn btn-danger"><i class="fa fa-list-ul" aria-hidden="true"></i></a>
+							</div>
+							<div class="col-md-10 text-center">
+								<button class="btn btn-md btn-danger" type="button" ng-click="searchZoneData()">Buscar</button>
+							</div>
+							<div class="col-md-1 text-center">
+								<button role="button" class="btn btn-danger popovers" data-toggle="popover" 
+								data-html="true" data-original-title="Otras gráficas" data-container=".nigga" data-placement="right" viewport="container"
+								data-content="<a href='#/graficaTipoInfraccionMensual'>Conteo por mes</a><hr><a href='#/graficaTipoInfraccionAnual' >Conteo por año</a>"><i class="fa fa-bar-chart" aria-hidden="true"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<!-- 		{{serviceData}} -->
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<div class="box box-danger">
+					<div class="box-header with-border text-center pointer">
+						<div class="row">
+							<div class="col-md-4">
+								<div id="exTab1" class="container">	
+									<ul  class="nav nav-tabs">
+										<li class="active"><a  data-target="#1a" data-toggle="tab">Barras</a></li>
+										<li><a data-target="#2a" data-toggle="tab">Lineal</a></li>
+										<li><a data-target="#3a" data-toggle="tab">Radar</a></li>
+										<li><a data-target="#4a" data-toggle="tab">Pastel</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<h3 class="box-title">Conteo de Infracciones por Tipos de Infracción y por Día</h3>
+							</div>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="tab-content clearfix">
+									<div class="tab-pane active" id="1a">
+										<canvas id="gDBar"></canvas>
+									</div>
+									<div class="tab-pane" id="2a">
+										<canvas id="gDLineal"></canvas>
+									</div>
+									<div class="tab-pane" id="3a">
+										<canvas id="gDRadar"></canvas>
+									</div>
+									<div class="tab-pane" id="4a">
+										<canvas id="gDPie"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+
+</html>

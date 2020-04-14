@@ -1,0 +1,18 @@
+  /* ------------------------------------------------- */
+ /* ----- ESTILOS GENERALES DE LA APLICACION -------- */
+/* ------------------------------------------------- */
+
+@import url('aplicacion/app.css');
+@import url('aplicacion/header.css');
+
+
+ /* ------------------------------------------------- */
+/* ---------------- NEGOCIO ----------------------- */
+
+/* SERVICIO */
+@import url('aplicacion/negocio/servicios.css');
+
+
+
+/*TEMAS*/
+@import url('temas/temas.css');

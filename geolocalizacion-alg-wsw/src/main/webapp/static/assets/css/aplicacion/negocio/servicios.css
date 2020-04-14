@@ -1,0 +1,5 @@
+.contentMain {
+	min-height: calc(100vh - 3.571rem);
+	background-color: #FAFAFA;
+	color: #ecf0f1 !important;
+}

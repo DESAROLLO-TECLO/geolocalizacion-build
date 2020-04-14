@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html ng-app="localizacionGps">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta content="/images/branding/googleg/1x/googleg_standard_color_128dp.png" itemprop="image" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+		
+	<link href="static/assets/img/iconTeclo.ico" rel="shortcut icon" type="image/x-icon" />
+	<link rel="stylesheet" href="static/assets/css/base.css" />
+	
+	<title>{{wsData.webService.nombreServicio}}</title>
+</head>
+<body ng-controller="templateController" class="tema-tecloLight">
+	<div class="wrapper ngOnlyEnterApp">
+		<div ng-include="'header.html'"></div>
+		<div class="content content-views" ng-class="{'contentMain':contentMain == true}">
+			<div class="animateVistas" ng-view>
+			</div>
+		</div>
+	</div>
+</body>
+
+<!--______________________________.:: JQUERY v2.2.0 ::.________________________________ -->
+<script src="static/assets/js/core/jQuery-2.2.0.min.js"></script>
+<script src="static/assets/js/core/jquery-ui.min.js"></script>
+
+<!--____________________________.:: BOOTSTRAP v3.3.6 ::._______________________________ -->
+<script src="static/assets/js/core/bootstrap.min.js"></script>
+
+<!--___________________________.:: ANGULAR-JS v1.5.8 ::._______________________________ -->
+<script src="static/assets/js/core/angular.min.js"></script>
+
+<!-- LIBRERIAS ANGULAR-JS -->
+	<!-- Block UI v0.2.1 -->
+	<script src="static/assets/js/plugins/blockUI/angular-block-ui.min.js"></script>
+	<!-- Device Detector -->
+	<script src="static/assets/js/lib/re-tree.min.js"></script>
+	<script src="static/assets/js/lib/ng-device-detector.min.js"></script>
+	<!-- JWT -->
+	<script src="static/assets/js/lib/angular-jwt.min.js"></script>
+	<!-- NG Storage -->
+	<script src="static/assets/js/lib/ngStorage.min.js"></script>
+	<!-- Route lib -->
+	<script src="static/assets/js/lib/angular-route.min.js"></script>
+	<!-- Cookies lib -->
+	<script src="static/assets/js/lib/angular-cookies.min.js"></script>
+	<!-- Resource lib -->
+	<script src="static/assets/js/lib/angular-resource.min.js"></script>
+	<!-- Responsive lib -->
+	<script src="static/assets/js/lib/angular-responsive.js"></script>
+	<!-- Upload Module -->
+	<script src="static/assets/js/lib/angular-base64-upload.js"></script>
+	<!-- Animate -->
+	<script src="static/assets/js/lib/angular-animate.min.js"></script>
+	
+<!-- LIBRERIAS -->
+	<!-- Moment -->
+	<script src="static/assets/js/lib/moment.js"></script>
+	<!-- bootstrap carousel -->
+	<script src="static/assets/js/lib/ui-bootstrap-tpls.min.js"></script>
+
+<!--_________________________________.:: BASE ::.______________________________________ -->
+	<!-- Angular app -->
+	<script src="static/angular/app.js"></script>
+
+<!--________________________________.:: CONFIG ::.______________________________________ -->
+	<!-- Route -->
+	<script src="static/angular/config/routeConfig.js"></script>
+	<!-- Event -->
+	<script src="static/angular/events/routeEvents.js"></script>
+	<!-- Constante -->
+	<script src="static/angular/config/constanteConfig.js"></script>
+
+<!--______________________________.:: DIRECTIVES ::._____________________________________ -->
+	<!-- dirPagination -->
+	<script src="static/angular/directives/pagination.js"></script>
+	<!-- rowsPerPage -->
+	<script src="static/angular/directives/rowsPerPage.js"></script>
+	
+	<!--______________________________.:: SERVICES ::._______________________________________ -->
+
+<!-- APLICACIÓN -->
+	<!-- Modal -->
+	<script src="static/angular/services/aplicacion/angular-modal-service.js"></script>
+	<script src="static/angular/services/aplicacion/webServiceSecurityService.js"></script>
+	
+<!--______________________________.:: CONTROLLERS ::._______________________________________ -->
+<!-- TEMPLATE -->
+	<script src="static/angular/controllers/aplicacion/templateController.js"></script>
+	<script src="static/angular/controllers/aplicacion/headerController.js"></script>
+	
+	<!-- Servicios -->
+	<script src="static/angular/controllers/webServiceDisplayController.js"></script>
+
+</html>

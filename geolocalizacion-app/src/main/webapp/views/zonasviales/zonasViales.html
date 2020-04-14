@@ -1,0 +1,260 @@
+<!-- {{data}} -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+#map2 {
+	height: 600px;
+	margin: 0px 0;
+	border-radius: 5px;
+	border: 1px solid silver;
+}
+
+.ssearchbar{
+	z-index: 100;
+	position: absolute;
+	margin-top: 1px;
+	right: 4px;
+/* 	left:100; */
+}
+.bootstrap-select .dropdown-toggle {
+	position: absolute;
+}
+.fa-minus, .fa-plus{
+	color: white;
+}
+
+#noFa{
+	display:none;
+}
+.scrollable-content {
+ 	overflow: auto;
+	max-height: 70vh;
+}
+.pointer{
+    cursor: pointer !important;
+}
+</style>
+</head>
+<body>
+	
+	<section class="content-header">
+		<h1>Ubicación</h1>
+		<ol class="breadcrumb">
+			<li><a><i class="fa fa-book"></i>Zonas Viales</a></li>
+			<li class="active">Ubicación</li>
+		</ol>
+	</section>
+<!-- 	{{rutass}} -->
+	<section class="content">
+		<div class="row">
+			<div class="col-md-12">
+<!-- 				<div ng-class="['ssearchbar','col-offset-6',{'col-md-6':toggleFlag=='V'}]" ng-show="toggleFlag=='V'"> -->
+				<div class="ssearchbar col-md-offset-8 col-md-4 col-xs-7" ng-show="toggleFlag=='V'">
+
+					<div class="row">
+						<div class="pull-right col-md-12 col-xs-12">
+							<div class="box box-danger insideBox">
+								<div class="row box-header with-border text-center pointer" data-widget="collapse">
+<!-- 									<div class=""> -->
+										<div class="col-md-offset-3 col-md-6 col-xs-6">
+											<h2 id="noFa"></h2>
+											<img src="static/dist/img/giphy.gif" style="width:20px;height:20px;" ng-show="requestInProgress">
+											<h2 class="box-title">Zonas Viales</h2>
+										</div>
+										<div class="col-md-3 col-xs-6">
+											<h3 class="box-title">{{temp}}</h3>
+										</div>
+<!-- 									</div> -->
+										
+									
+								</div>
+								
+								<div class="box-body">
+									<form name="rutasForm">
+										<div class="row">
+											<div class="col-md-6">
+												<div class="form-group" ng-class="{'has-error': rutasForm.fechaCoordenadas.$invalid && rutasForm.fechaCoordenadas.$dirty}">
+							                      <label for="fechaCoordenadas">*Fecha:</label>
+							                      <div class="input-group date ">
+							                          <div class="input-group-addon">
+							                              <i class="fa fa-calendar"></i>
+							                          </div>
+							                          <input type="text" class="form-control pointer" id="datepicker"
+							                                 data-date-format="dd/mm/yyyy" ng-model="fecha"
+							                                 ng-required="true" name="fechaCoordenadas" id="fechaCoordenadas"
+							                                 ng-change="updateFIFecha()" show-button-bar="true" readonly
+							                                 style="background-color:white;">
+							                      	</div>
+							                      	<div
+							                        	ng-show="rutasForm.fechaCoordenadas.$invalid && rutasForm.fechaCoordenadas.$dirty"
+							                        	ng-style="{color:'red'}">La fecha es requerida
+							                      	</div>
+							                  	</div>
+											</div>
+											<div class="col-md-6">
+												<div class="form-group">
+							                      <label for="fechaCoordenadas">*Temporizador:</label>
+							                      <div class="input-group date ">
+							                          <div class="input-group-addon">
+							                              <i class="fa fa-refresh"></i>
+							                          </div>
+							                          <select 
+							                          select2
+							                          class="form-control" 
+							                          data-minimum-results-for-search="Infinity"
+							                          ng-model="intervalOpt" 
+							                          id="selectTimeRefresh"
+							                          ng-change="interval(currentSearchKind, intervalOpt.timeRefresh)"
+							                          ng-options="item as item.nbTimeRefresh for item in selectListTimeRefresh track by item.idTimeRefresh">
+							                          </select>
+							                      	</div>
+							                  	</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<div id="exTab1">	
+													<ul class="nav nav-tabs">
+														<li class="active"><a data-target="#2a" data-toggle="tab" ng-click="changeSearchKind('h')">HandHelds</a></li>
+														<li><a data-target="#1a" data-toggle="tab" ng-click="changeSearchKind('o')">Oficiales</a></li>
+														
+													</ul>
+													
+													<div class="tab-content">
+														<div class="tab-pane active" id="2a">
+															<div class="scrollable-content panel-group" id="accordion" role="tablist" aria-multiselectable="true" ng-show="currentSearchKind=='h'">
+																<div class="panel panel-default" ng-repeat="z in zonas">
+																	<div class="panel-heading" role="tab" id="headingOne{{$index}}">
+																		
+																		<h4 class="panel-title">
+																		<input type="checkbox" ng-model="z.allDispositivos" ng-click="toogleAllNumSeries($index)">
+																		<strong><a role="button" data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwo{{$index}}" aria-expanded="true" aria-controls="collapseTwo{{$index}}">
+																			{{z.nombreZonaVial + ' ('+z.dispositivos.length+')'}}
+																		</a></strong>
+																		</h4>
+															    	</div>
+																	<div id="collapseTwo{{$index}}" class="scrollable-content panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+																		<div class="panel-body">
+																			<div class="table-responsive">
+																				<table class="table table-condensed table-hover">
+																					<tbody>
+																						<tr dir-paginate="disp in z.dispositivos | itemsPerPage: 100">
+																							<td width="5%"><input type="checkbox" ng-model="disp.checked" ng-click="toogleSingleDisp($parent.$index)"><td>
+																							<td>{{disp.numSerie}}<td>
+																						</td>
+																					</tbody>
+																				</table>
+																			</div>
+																			<span ng-show="a.empleados.length<1">Sin dispositivos registrados en esta área operativa</span>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+														
+							  							<div class="tab-pane " id="1a">
+															<div class="scrollable-content panel-group" id="accordion" role="tablist" aria-multiselectable="true" ng-show="currentSearchKind=='o'">
+																<div class="panel panel-default" ng-repeat="z in zonas | filter:{ nombreZonaVial: '!SIN ZONA ASIGNADA'}">
+																	<div class="panel-heading" role="tab" id="headingOne{{$index}}">
+																		<h4 class="panel-title">
+																		<input type="checkbox" ng-model="z.allOfficers" ng-click="toogleAllOfficers($index)">
+																		<strong><a role="button" data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne{{$index}}" aria-expanded="true" aria-controls="collapseOne{{$index}}">
+																			{{z.nombreZonaVial + ' ('+z.oficiales.length+')'}}
+																		</a></strong>
+																		</h4>
+															    	</div>
+																	<div id="collapseOne{{$index}}" class="scrollable-content panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+																		<div class="panel-body">
+																			<div class="table-responsive">
+																				<table class="table table-condensed table-hover">
+																					<tbody>
+																						<tr dir-paginate="oficial in z.oficiales | itemsPerPage: 100">
+																							<td width="5%"><input type="checkbox" ng-model="oficial.checked" ng-click="toogleSingle($parent.$index)"><td>
+																							<td>{{oficial.empNombre+" "+oficial.empApePaterno+" "+oficial.empApeMaterno}}<td>
+																						</td>
+																					</tbody>
+																				</table>
+																			</div>
+																			<span ng-show="a.empleados.length<1">Sin oficiales registrados en esta área operativa</span>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													
+														
+													</div>
+												</div>
+											</div>
+										</div>
+										
+										<div class="row">
+											<div class="col-md-6 text-center">
+												<button class="btn btn-danger" ng-click="searchLastPoints(currentSearchKind, false)" ng-disabled="requestInProgress">
+													Buscar
+												</button>
+											</div>
+											<div class="col-md-6 text-center">
+												<button class="btn btn-danger" ng-click="clearAllRoutes()">
+													Limpiar Rutas
+												</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="box box-danger">
+					<div class="box-header text-left">
+						<h2 class="box-title">Fecha de Consulta: {{fechaCons}}</h2>
+					</div>
+					<div class="box-body">
+						<div id='map2'></div>
+					</div>
+				</div>
+			</div>
+		</div>
+<!-- 		{{rutass}} -->
+	</section>
+	
+	<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  		<div class="modal-dialog" role="document">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        			<h4 class="modal-title">Tipo de Ruta</h4>
+      			</div>
+      			<div class="modal-body">
+      				<div class="row">
+      					<div class="col-md-6 text-center">
+      						<button class="btn btn-danger btn-lg" ng-click="startRoute('polygon',objectRoute,kindOfRoute)" data-dismiss="modal">Por Polígono</button>
+      					</div>
+      					<div class="col-md-6 text-center">
+      					    <button class="btn btn-danger btn-lg" ng-click="startRoute('route',objectRoute,kindOfRoute)" data-dismiss="modal">Por Calle</button>
+      					</div>
+      				</div>
+      			</div>
+      			<div class="modal-footer">
+        			<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      			</div>
+      		</div>
+		</div>
+  	</div>
+</body>
+
+<script type="text/javascript">
+	$('#datepicker').datepicker({
+		autoclose: true,
+		endDate: '+0d',
+		todayHighlight: true
+    })
+</script>
+
+</html>

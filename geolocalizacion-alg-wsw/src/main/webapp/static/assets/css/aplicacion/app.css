@@ -1,0 +1,186 @@
+/* Alinear texto a la izquierda */
+.align-left {
+  text-align: left;
+}
+/* Alinear texto a la derecha */
+.align-right {
+  text-align: right;
+}
+
+/* Mensaje del perfil no autorizado para ver una pantalla */
+.mensajeAutorizacion{
+	font-size: 1.2rem;
+}
+
+
+/* EN LAS TABLAS PARA CENTRAR VERTICALMENTE EL TEXTO O CONTENIDO */
+.alignMiddle{
+	vertical-align: middle !important;
+}
+
+/* Dimensioar el contenedor al 100 or ciento del contenedor padre */
+.fullWidth{
+	width:100%;
+}
+
+/* QUITAR BORDE DE ARRIBA DE LOS BOX */
+.boxBorder-none{
+	border-top: none !important;
+}
+
+
+/* PONER LA MANITA EN LOS LABEL QUE SE ASOCIEN CON LOS INPUT TIPO CHECKBOX */
+.labelCheck, .labelRadio{
+	cursor: pointer !important;
+}
+/* Alinear al centro verticalmente los radio buttons */
+.labelRadio{
+	vertical-align: middle;
+}
+
+/* Centrar col con medidas impares E.j. col-xs-7 */
+.centerBox{
+	display: flex;
+	justify-content: center;
+}
+
+/* CENTRAR COLUMNAS */
+.centerCol {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+/* CENTRAR FILAS */
+.centerRow {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+/* Centrar cualquier contenedor vertical y horizontalmente */
+.verticalCenter{
+/* 	min-height: 145px; */
+	display: flex !important;
+	flex-direction: column !important;
+    justify-content: center !important;
+    align-content: center !important;
+}
+
+/* Fieldset personalizado*/
+.fieldset{
+	border-radius: 0.5rem;
+	border: 1px solid #ccc !important;
+	padding: 0 1.4rem 1.4rem 1.4rem !important;
+	margin: 0 0 1.5rem 0 !important;
+}
+
+/* Fondo blanco y cursor de manita en inputs de fecha */
+.inputFecha {
+	background-color: #fff !important;
+	cursor: pointer !important;
+}
+
+/* Quitar cualquier borde */
+.borderNone {
+	border: inherit !important;
+}
+
+/* Resetear los input */
+.resetearInput{
+	position: absolute;
+	top: 0.3571rem;
+	right: 3.214rem;
+	border: none;
+	outline: none;
+	background-color: #fff;
+	color: #cf0a2c;
+	font-weight: 700;
+	z-index: 1000;
+}
+
+/* Mostrar texto con la primer letra de cada palabra en mayúscula */
+.upperFirst {
+	text-transform: capitalize !important;
+}
+/* Mostrar texto en mayúsculas */
+.uppercase {
+	text-transform: uppercase !important;
+}
+/* Mostrar texto en minúsculas */
+.lowercase {
+	text-transform: lowercase !important;
+}
+
+
+/* ENLACE DEL ORDENADOR DE LOS CAMPOS EN LAS TABLAS */
+.ordenCampos{
+	color: #55565a;
+}
+.ordenCampos:hover{
+	color: #cf0a2c;
+}
+.ordenCampos i{
+	font-size: .9rem;
+}
+
+/* Reiniciar los espacios de cualquier contenedor */
+.sinEspacio{
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+/* BOX-TITLE RESALTADO */
+.box-title_resaltado {
+	font-size: 1.6rem
+}
+
+/* Boton que se posiciona del lado superior derecho del contenedor */
+.btn-supRight{
+	position: absolute;
+	top: 0.5714rem;
+	right: 0.5714rem;
+}
+/* Boton que se posiciona del lado superior izquierdo del contenedor */
+.btn-supLeft{
+	position: absolute;
+	top: 0.5714rem;
+	left: 0.5714rem;
+}
+
+/* Permitir salto de línea en los modales. Nota: en el javasript utilizar \n */
+.msgSaltoModal{
+	white-space: pre-wrap;
+}
+
+/* Estilos para los dropdown-toggle */
+.bootstrap-select .dropdown-toggle {
+	position: absolute;
+}
+
+/* APLICAR FLITRO DESENFOQUE */
+.desenfoqueApp {
+	filter: blur(3px);
+}
+
+/* Bloquear selección */
+.noneSelectedUser {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+/* Centrar botón */
+.btnCenter{
+	margin-top: 0.7143rem;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* DAR ESTILOS A LOS INPUT DE TIPO FILE */
+.inputFile{
+	background-color: #fff !important;
+	cursor: default !important;
+}

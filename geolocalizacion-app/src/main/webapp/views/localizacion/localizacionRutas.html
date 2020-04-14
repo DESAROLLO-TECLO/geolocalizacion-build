@@ -1,0 +1,202 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+	#map1 {
+		height: 70vh;
+		margin-top: 32px;
+		border-radius: 5px;
+		border: 1px solid silver;
+	}
+	.ssearchbar{
+		z-index: 100;
+		position: absolute;
+		margin-top: 1px;
+		right: 4px;
+	}
+	.ssearchbar > .box > .box-header{
+		cursor: pointer !important;
+	}
+	.noFa{
+		display:none;
+	}
+	.pac-container {
+	    z-index: 1051 !important;
+	}
+	#mapDiv{
+		margin-bottom:0px;
+	}
+</style>
+</head>
+<body>
+	<section class="content-header">
+		<h1>Trazo de Rutas</h1>
+		<ol class="breadcrumb">
+			<li><a><i class="fa fa-book"></i>Trazo de Rutas</a></li>
+			<li class="active">Rutas</li>
+		</ol>
+	</section>
+
+	<section class="content">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="row">
+					<div class="ssearchbar col-md-offset-3 col-md-6">
+						<div class="box box-danger">
+							<div class="box-header with-border text-center pointer" data-widget="collapse">
+								<h2 class="noFa"></h2>
+								<h3 class="box-title">Búsqueda</h3>
+							</div>
+							<div class="box-body">
+								<form role="form" name="rutasForm">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group"
+												ng-class="{'has-error': rutasForm.origen.$invalid && rutasForm.origen.$dirty}">
+												<label>Origen:</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i class="fa fa-key"></i></span>
+													<input type="text" class="form-control" name="origen"
+														id="origen" ng-model="param.origen" ng-required="true"> 
+												</div>
+												<div ng-show="rutasForm.origen.$error.required && rutasForm.origen.$dirty"
+													ng-style="{color:'red'}">El origen es requerido</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group"
+												ng-class="{'has-error': rutasForm.destino.$invalid && rutasForm.destino.$dirty}">
+												<label>Destino:</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i class="fa fa-key"></i></span>
+													<input type="text" class="form-control" name="destino" id="destino"
+														ng-model="param.destino" ng-required="true">
+												</div>
+												<div ng-show="rutasForm.destino.$error.required && rutasForm.destino.$dirty"
+													ng-style="{color:'red'}">El destino es requerido</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group"
+												ng-class="{'has-error': rutasForm.tipoRecorrido.$invalid && rutasForm.tipoRecorrido.$dirty}">
+												<label>Tipo Recorrido:</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="fa fa-asterisk"></i></span> <select
+														class="form-control select2" data-live-search="true"
+														name="comboTipoRecorrido" id="comboTipoRecorrido"
+														ng-disabled='tipoBusqueda.idTipoBusqueda == 1'
+														ng-options="tipoRecorrido.txTipoRecorrido for tipoRecorrido in listaTiposRecorrido"
+														ng-model="param.tipoRecorrido">
+													</select>
+												</div>
+												<div
+													ng-show="rutasForm.tipoRecorrido.$error.required && rutasForm.tipoRecorrido.$dirty"
+													ng-style="{color:'red'}">El tipo de recorrido es
+													requerido</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6 text-center">
+											<button type="button" class="btn btn-danger btn-flat" id="buscarRutas" ng-click="calculateAndDisplayRoute()">Buscar</button>
+										</div>
+										<div class="col-md-6 text-center">
+											<button type="button" class="btn btn-danger btn-flat" data-toggle="modal" data-target="#myModal">Parada</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+		<div class="row">
+			<div class="col-md-12">
+				<div class="box box-danger" id="mapDiv">
+					<div class="box-body">
+	
+						<div id='map1'></div>
+	
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row" ng-show="points.length>0">
+			<div class="col-md-12">
+				<div class="box box-danger table-responsive">
+					<div class="box-body table-respoonsive">
+						<table class="table">
+							<tbody>
+								<tr>
+									<th>SEGMENTO</th>
+									<th>PUNTO INICIAL</th>
+									<th>PUNTO FINAL</th>
+									<th>DISTANCIA</th>
+									<th>TIEMPO APROX.</th>
+								</tr>
+							</tbody>
+							<tr dir-paginate="point in points | itemsPerPage: 100">
+								<td>{{$index+1}}</td>
+								<td>{{point.beg}}</td>
+								<td>{{point.end}}</td>
+								<td>{{point.dist}}</td>
+								<td>{{point.time}}</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+  		<div class="modal-dialog" role="document">
+    		<div class="modal-content">
+      			<div class="modal-header">
+        			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        			<h4 class="modal-title">Agregar Paradas</h4>
+      			</div>
+      			<div class="modal-body">
+      				<form name="stopsForm">
+      					<div class="row">
+      						<div class="col-sm-offset-1 col-md-10">
+      							<div class="form-group" ng-class="{'has-error': stopsForm.nuevoPunto.$invalid && stopsForm.nuevoPunto.$dirty}">
+									<label>Nuevo punto:</label>
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-search"></i></span>
+										<input type="text" class="form-control" name="nuevoPunto" id="nuevoPunto" ng-model="nuevoPunto" ng-required="true">
+									</div>
+									<div ng-show="stopsForm.nuevoPunto.$error.required && stopsForm.nuevoPunto.$dirty"
+										ng-style="{color:'red'}">El punto es requerido</div>
+								</div>			
+      						</div>
+      					</div>
+      				</form>
+      				<div class="col-sm-offset-1 col-md-10">
+	      				<div class="table-responsive">
+							<table class="table table-condensed table-hover">
+								<tbody>
+									<tr dir-paginate="p in puntos | itemsPerPage: 100">
+										<td width="5%"><span class="fa fa-trash" ng-click="clearPoint($index)"></td><td>
+										<td>{{p.descripcion}}<td>
+									</td>
+								</tbody>
+							</table>
+						</div>
+					</div>
+      			</div>
+      			<div class="modal-footer">
+      				<button type="button" class="btn btn-danger" data-dismiss="modal">Aceptar</button>
+        			<button type="button" class="btn btn-default" ng-click="clearPoints()" data-dismiss="modal">Cancelar</button>
+      			</div>
+      		</div>
+		</div>
+  	</div>
+</body>
+</html>

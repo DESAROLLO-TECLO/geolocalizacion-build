@@ -1,0 +1,198 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+	#map {
+		height: 70vh;
+		margin-top: 32px;
+		border-radius: 5px;
+		border: 1px solid silver;
+	}
+	.ssearchbar{
+		z-index: 100;
+		position: absolute;
+		margin-top: 1px;
+		right: 4px;
+	}
+	.ssearchbar > .box > .box-header{
+		cursor: pointer !important;
+	}
+	.noFa{
+		display:none;
+	}
+	.pac-container {
+	    z-index: 1051 !important;
+	}
+	#mapDiv{
+		margin-bottom:0px;
+	}
+</style>
+</head>
+<body>
+	<section class="content-header">
+		<h1>Búsqueda Rutas</h1>
+		<ol class="breadcrumb">
+			<li><a><i class="fa fa-book"></i>Búsqueda Rutas</a></li>
+			<li class="active">Rutas</li>
+		</ol>
+	</section>
+
+	<section class="content">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="row">
+					<div class="ssearchbar col-md-offset-3 col-md-6">
+						<div class="box box-danger">
+							<div class="box-header with-border text-center pointer" data-widget="collapse">
+								<h2 class="noFa"></h2>
+								<h3 class="box-title">Búsqueda</h3>
+							</div>
+							<div class="box-body">
+			
+								<div class="row" id="divBusqueda" class="collapse in">
+									<form role="form" name="localizacionForm">
+			
+			
+										<div class="col-md-6">
+											<div class="form-group"
+												ng-class="{'has-error': localizacionForm.tipoRecorrido.$invalid && localizacionForm.tipoRecorrido.$dirty}">
+												<label>Tipo Recorrido:</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="fa fa-asterisk"></i></span> <select
+														class="form-control select2" data-live-search="true"
+														name="comboTipoRecorrido" id="comboTipoRecorrido"
+														ng-options="tipoRecorrido.txTipoRecorrido  for tipoRecorrido in listaTiposRecorrido"
+														ng-model="tipoRecorrido">
+			
+													</select>
+												</div>
+												<div
+													ng-show="localizacionForm.tipoRecorrido.$error.required && localizacionForm.tipoRecorrido.$dirty"
+													ng-style="{color:'red'}">El tipo de recorrido es requerido</div>
+											</div>
+										</div>
+			
+										<div class="col-md-6">
+											<div class="form-group"
+												ng-class="{'has-error': localizacionForm.comboTipoBusqueda.$invalid && localizacionForm.comboTipoBusqueda.$dirty}">
+												<label>Tipo Búsqueda:</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="fa fa-asterisk"></i></span> <select
+														class="form-control select2" data-live-search="true"
+														name="comboTipoBusqueda" id="comboTipoBusqueda"
+														ng-options="tipoBusqueda.nombreTipoBusqueda  for tipoBusqueda in listaTipoBusqueda"
+														ng-model="tipoBusqueda">
+			
+													</select>
+												</div>
+												<div
+													ng-show="localizacionForm.comboTipoBusqueda.$error.required && localizacionForm.comboTipoBusqueda.$dirty"
+													ng-style="{color:'red'}">El tipo de recorrido es requerido</div>
+											</div>
+										</div>
+			
+			
+										<div class="col-md-6" ng-show="tipoBusqueda.idTipoBusqueda ==1">
+											<div class="form-group"
+												ng-class="{'has-error': localizacionForm.fInicio.$invalid && localizacionForm.fInicio.$dirty}">
+												<label for="fInicio">Fecha Inicio:</label>
+												<div class="input-group date">
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" id="fInicio"
+														class="form-control pull-right inputFecha" name="fInicio"
+														ng-model="fInicio"
+														ng-required="tipoBusqueda.idTipoBusqueda == 1" date-picker
+														mindate="fInicio" elemento="'fFin'">
+												</div>
+												<div
+													ng-show="localizacionForm.fInicio.$error.required && localizacionForm.fInicio.$dirty"
+													ng-style="{color:'red'}">La la fecha inicial es requerida</div>
+											</div>
+										</div>
+										<div class="col-md-6" ng-show="tipoBusqueda.idTipoBusqueda ==1">
+											<div class="form-group"
+												ng-class="{'has-error': localizacionForm.fFin.$invalid && localizacionForm.fFin.$dirty}">
+												<label for="fFin">Fecha Fin:</label>
+												<div class="input-group date">
+													<div class="input-group-addon">
+														<i class="fa fa-calendar"></i>
+													</div>
+													<input type="text" id="fFin"
+														class="form-control pull-right inputFecha" name="fFin"
+														ng-model="fFin"
+														ng-required="tipoBusqueda.idTipoBusqueda == 1" date-picker
+														maxdate="fFin" elemento="'fInicio'">
+												</div>
+												<div
+													ng-show="localizacionForm.fFin.$error.required && localizacionForm.fFin.$dirty"
+													ng-style="{color:'red'}">La la fecha final es requerida</div>
+											</div>
+										</div>
+			
+			
+										<div class="col-md-12" ng-if="tipoBusqueda.idTipoBusqueda ==2">
+											<div ng-if="listaRutas.length > 0" class="form-group"
+												ng-class="{'has-error': localizacionForm.comboRutaUser.$invalid && localizacionForm.comboRutaUser.$dirty}">
+												<label>Rutas:</label>
+												<div class="input-group">
+													<span class="input-group-addon"><i
+														class="fa fa-asterisk"></i></span> <select
+														class="form-control select2" data-live-search="true"
+														name="comboRutaUser" id="comboRutaUser"
+														ng-change="searchCoordenadas(ruta)"
+														ng-options="ruta.origenDescripcion  for ruta in listaRutas "
+														ng-model="ruta">
+			 										</select>
+												</div>
+												<div
+													ng-show="localizacionForm.comboRutaUser.$error.required && localizacionForm.comboRutaUser.$dirty"
+													ng-style="{color:'red'}"></div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group"
+												ng-class="{'has-error': localizacionForm.placaUsuario.$invalid && localizacionForm.placaUsuario.$dirty}">
+												<label>Placa Usuario:</label>
+												<div class="input-group">
+													<input type="text" name="placaUsuario" ng-model="placaUsuario"
+														ng-maxlength="30" ng-required="true" class="form-control"></input>
+													<span class="input-group-btn"><button type="button"
+															id="buscarRutas" ng-click="searchRutasCoordenadas(placaUsuario)"
+															class="btn btn-danger btn-flat">Buscar</button> </span>
+												</div>
+												<div
+													ng-show="localizacionForm.placaUsuario.$error.required && localizacionForm.placaUsuario.$dirty"
+													ng-style="{color:'red'}">La placa de usuario es requerido</div>
+											</div>
+										</div>
+			
+									</form>
+			
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="box box-danger" id="mapDiv">
+					<div class="box-body">
+	
+						<div id='map'></div>
+	
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+</body>
+
+</html>

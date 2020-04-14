@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="sspcdmxsupervisores_v100r6_qa_wsw">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <property name="java-output-path" value="/geolocalizacion-gps-wsw/target/classes"/>
+        <property name="component.exclusion.patterns" value="WEB-INF/lib/logback-*.jar,WEB-INF/lib/slf4j-log4j12*.jar"/>
+        <property name="context-root" value="sspcdmxsupervisores_v100r6_qa_wsw"/>
+    </wb-module>
+</project-modules>
