@@ -23,9 +23,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import mx.com.teclo.alg.ws.persistencia.hibernate.dao.archivo.ArchivoDAO;
+import mx.com.teclo.alg.ws.persistencia.hibernate.dao.dispositivosmoviles.DispositivoMovilTipoDAO;
+import mx.com.teclo.alg.ws.persistencia.hibernate.dao.empleados.EmpleadoDAO;
 import mx.com.teclo.alg.ws.persistencia.hibernate.dao.parametro.ParametroDAO;
 import mx.com.teclo.alg.ws.persistencia.hibernate.dto.dispositivosmoviles.DispositivoMovilTipoDTO;
 import mx.com.teclo.alg.ws.persistencia.hibernate.dto.hh.archivo.ArchivoDTO;
+import mx.com.teclo.alg.ws.persistencia.hibernate.dto.hh.empleados.EmpleadosDTO;
 import mx.com.teclo.alg.ws.persistencia.hibernate.dto.hh.parametro.ParametroDTO;
 import mx.com.teclo.alg.ws.persistencia.vo.hh.dispositivosmoviles.DispositivoMovilTipoVO;
 import mx.com.teclo.alg.ws.persistencia.vo.hh.eventogps.TipoEventoAlgVO;
@@ -34,7 +37,6 @@ import mx.com.teclo.alg.ws.persistencia.vo.hh.parametro.ParametroVO;
 import mx.com.teclo.arquitectura.ortogonales.util.ResponseConverter;
 import mx.com.teclo.smm.wsw.util.bd.ConnectionUtilBd;
 import mx.com.teclo.smm.wsw.util.google.ServicioGoogle;
-import mx.com.teclo.sms.ws.util.enums.TipoOperacion;
 
 @Service
 public class EventoAlgServiceOptBDServiceImpl implements EventoAlgServiceOptBDService{
@@ -55,7 +57,18 @@ public class EventoAlgServiceOptBDServiceImpl implements EventoAlgServiceOptBDSe
 	private ArchivoDAO archivoDAO;
 	
 	@Autowired
+	private EmpleadoDAO empleadoDAO;
+	
+	@Autowired
 	private EventoAlgServiceOptBDService eventoAlgServiceOptBDService;
+	
+	@Autowired
+	private DispositivoMovilTipoDAO dispositivoMovilTipoDAO;
+	
+	@Autowired
+	private ServicioGoogle servicioGoogle;
+	
+	private final static Long EMPLEADO_DEFAULT = 99L;
 	
 	@Transactional
 	@Override
@@ -113,8 +126,6 @@ public class EventoAlgServiceOptBDServiceImpl implements EventoAlgServiceOptBDSe
 			mapSingle = new HashMap<>();
 			teVO = eventoAlgFileService.filterTypeEvent(teListVO, (String) m.get("tipoEventoCodigo"));
 			mapSingle.put("tipoEventoAlg", teVO.getIdTipoEvento());
-			// AGREGAR EL EMPLEADO
-			mapSingle.put("idEmpleado", new Long(TipoOperacion.DEFAULT_EMPLOYE.getCdOperacion()));
 			// OBTENER EL TIPO DE DISPOSITIVO
 			DispositivoMovilTipoDTO tdDTO = eventoAlgFileService.filterTypeDevice(tdListDTO, (String) m.get("tipoDispositivoCodigo"));
 			mapSingle.put("tipoDispositivoMovil", tdDTO.getIdTipoDispositivo());
@@ -124,13 +135,19 @@ public class EventoAlgServiceOptBDServiceImpl implements EventoAlgServiceOptBDSe
 			mapSingle.put("longitudGps", new Double(longitudGps));
 			// MIENTRAS LA BANDERA Y EL PARÁMETRO EXISTAN ENTONCES DE BUSCAR LA DIRECCIÓN
 			if(searchDir) {
-				txtDir = ServicioGoogle.buscarDireccion(Double.parseDouble(latitudGps),Double.parseDouble(longitudGps));
+				txtDir = servicioGoogle.buscarDireccion(Double.parseDouble(latitudGps),Double.parseDouble(longitudGps));
 				if(txtDir != null) {
 					mapSingle.put("direccion", txtDir);
 				}else {					
 					mapSingle.put("direccion", "--");
 				}
 			}
+			
+			// Buscamos el empleado mediante su placa
+			Long idEmp = eventoAlgServiceOptBDService.idEmpleado((String)m.get("placaOficial"));
+			Long empId = (idEmp == null ? EMPLEADO_DEFAULT : idEmp);
+			// AGREGAR EL EMPLEADO
+			mapSingle.put("idEmpleado", empId);
 			mapSingle.put("numSerie", (String)m.get("numSerie"));
 			String numImei = (String) m.get("numImei");
 			mapSingle.put("numImei", Integer.parseInt(numImei));
@@ -139,11 +156,11 @@ public class EventoAlgServiceOptBDServiceImpl implements EventoAlgServiceOptBDSe
 			fhEvent = sdf.parse((String) m.get("fechaHoraEvento"));
 			mapSingle.put("fechaHoraEvento",fhEvent);
 			mapSingle.put("estatusEvento", 1);
-			mapSingle.put("creadoPor", new Long(TipoOperacion.DEFAULT_EMPLOYE.getCdOperacion()));
+			mapSingle.put("creadoPor", empId);
 			mapSingle.put("fechaCreacion", Calendar.getInstance().getTime());
-			mapSingle.put("modificadoPor", new Long(TipoOperacion.DEFAULT_EMPLOYE.getCdOperacion()));
+			mapSingle.put("modificadoPor", empId);
 			mapSingle.put("ultimaModificacion", Calendar.getInstance().getTime());
-			mapSingle.put("historico", 0);
+			mapSingle.put("historico", m.get("historico"));
 			finalsave.add(mapSingle);
 		}
 		// Abrimos la conexión a BD
@@ -196,31 +213,7 @@ public class EventoAlgServiceOptBDServiceImpl implements EventoAlgServiceOptBDSe
         	stmt.addBatch();
         }
         stmt.executeBatch();
-        /*int [] numUpdates = 
-        for (int i=0; i < numUpdates.length; i++) {
-        	if (numUpdates[i] == -2)
-        	      System.out.println("Execution " + i +": unknown number of rows updated");
-        	    else
-        	      System.out.println("Execution " + i +"successful: " + numUpdates[i] + " rows updated");
-        }*/
         con.commit();
-        
-        /*Statement s = con.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-        s.setFetchSize(1000);
-		
-		if(!finalsave.isEmpty()) {
-			String query = null;
-			for(Map<String, Object> m: finalsave) {
-				query = "INSERT INTO TALG002D_EVENTOS_GPS(ID_TIPO_EVENTO, EMP_ID, ID_TIPO_DISPOSITIVO, NU_GPS_LATITUD, NU_GPS_LONGITUD, "
-						+ "NU_SERIE, NU_IMEI, NU_INFRACCION_NUM, FH_FECHA_HORA_EVENTO, ST_EVENTO, ID_USR_CREACION, FH_CREACION, ID_USR_MODIFICA, "
-						+ "FH_MODIFICACION, TX_DIRECCION, ST_HISTORICO) VALUES "
-						+ "("+m.get("tipoEventoAlg")+","+m.get("idEmpleado")+","+m.get("tipoDispositivoMovil")+",'"+m.get("latitudGps")+"','"+m.get("longitudGps")+"',"
-						+ " '"+m.get("numSerie")+"','"+m.get("numImei")+"','"+m.get("numInfraccion")+"',TO_DATE('"+m.get("fechaHoraEvento")+"','YYYY-MM-DD HH24:MI:SS'),"+m.get("estatusEvento")+","
-						+ " "+m.get("creadoPor")+",SYSDATE,"+m.get("modificadoPor")+",SYSDATE,'"+m.get("direccion")+"',"+m.get("historico")+")";
-				s.executeQuery(query);
-			}
-			
-		}*/
         stmt.close();
 		con.close();
 		return true;
@@ -295,5 +288,33 @@ public class EventoAlgServiceOptBDServiceImpl implements EventoAlgServiceOptBDSe
 		fDTOReturn.setIdUsrModifica(99L);
 		fDTOReturn.setFhModificacion(new Date());
 		return fDTOReturn;
-	} 
+	}
+
+	@Transactional
+	@Override
+	public Long idEmpleado(String cdPlaca) {
+		EmpleadosDTO empleado = empleadoDAO.findUserByPlaca(cdPlaca);
+		if(empleado == null)
+			return null;
+		return empleado.getEmpId();
+	}
+	
+	@Override
+	@Transactional
+	public DispositivoMovilTipoVO filterTypeDevice(String cdEvent) {
+		DispositivoMovilTipoDTO dispo = dispositivoMovilTipoDAO.activoByCode(cdEvent);
+		DispositivoMovilTipoVO voReturn = new DispositivoMovilTipoVO();
+		ResponseConverter.copiarPropriedades(voReturn, dispo);
+		return voReturn;
+	}
+	
+	@Override
+	@Transactional
+	public ParametroVO restriction(String cd) {
+		ParametroDTO pDTO = parametroDAO.restrictionByCode(cd);
+		ParametroVO pVO = new ParametroVO();
+		ResponseConverter.copiarPropriedades(pVO, pDTO);
+		return pVO;
+	}
+	
 }

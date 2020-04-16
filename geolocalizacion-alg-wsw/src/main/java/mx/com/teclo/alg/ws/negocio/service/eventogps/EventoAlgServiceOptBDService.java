@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
+import mx.com.teclo.alg.ws.persistencia.vo.hh.dispositivosmoviles.DispositivoMovilTipoVO;
 import mx.com.teclo.alg.ws.persistencia.vo.hh.eventogps.request.RequestEventoAlgVO;
 import mx.com.teclo.alg.ws.persistencia.vo.hh.parametro.ParametroVO;
 
@@ -44,4 +45,25 @@ public interface EventoAlgServiceOptBDService {
 	 * @return RequestEventoAlgVO
 	 */
 	public RequestEventoAlgVO saveBitac(Map<String, Object> mapResultProcess) throws FileNotFoundException;
+	
+	/**
+	 * @Descripcion: Servicio para obtener el identificador actual del usuario
+	 * @author jorgeluis
+	 * @return Long
+	 */
+	public Long idEmpleado(String cdPlaca);
+	
+	/**
+	 * @Descripcion: Servicio para buscar tuipo de eventos
+	 * @author jorgeluis
+	 * @return DispositivoMovilTipoVO
+	 */
+	public DispositivoMovilTipoVO filterTypeDevice(String cdEvent);
+	
+	/**
+	 * @Descripcion: Servicio para consultar parámetro por su codigo
+	 * @author jorgeluis
+	 * @return ParametroVO
+	 */
+	public ParametroVO restriction(String cd);
 }

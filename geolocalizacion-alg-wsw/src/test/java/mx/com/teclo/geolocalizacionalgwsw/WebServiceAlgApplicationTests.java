@@ -241,7 +241,7 @@ public class WebServiceAlgApplicationTests {
 		String voStr = getEvent();  //5512349674
 		EventoAlgVO vo = objectMapper.readValue(voStr, EventoAlgVO.class);
 		ReponseEventoAlgVO voReturn = eventoAlgFileService.saveEvent(vo);
-		if(voReturn != null) {
+		if(voReturn != null) { 
 			System.err.println(voReturn.getCodigoHttp());
 			System.err.println(voReturn.getDescripcion());
 		}

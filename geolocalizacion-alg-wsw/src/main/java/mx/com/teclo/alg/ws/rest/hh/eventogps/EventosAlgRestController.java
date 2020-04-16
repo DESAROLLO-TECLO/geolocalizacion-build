@@ -46,29 +46,18 @@ public class EventosAlgRestController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EventosAlgRestController.class);
 
-	@RequestMapping(value = "/gps/evento", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<ReponseEventoAlgVO> saveEventoGps(@RequestBody EventoAlgVO eventoAlgVO)
-			throws NotFoundHttpResponse, OKHttpResponse, BusinessHttpResponse, BadRequestHttpResponse {
-		logger.info("/coordenada:::Longitud[{}]:::Latitud[{}]", eventoAlgVO.getLongitudGps(), eventoAlgVO.getLatitudGps());
-		ReponseEventoAlgVO reponseEventoAlgVO;
-		reponseEventoAlgVO = eventoAlgService.saveEventoAlg(eventoAlgVO);
-		throw new OKHttpResponse(reponseEventoAlgVO.getDescripcion(), reponseEventoAlgVO.getCodigoHttp()+NumeroServicio.SERVICIO1.getNumServicio(), reponseEventoAlgVO.getEventoAlgVO());
-	}
-	
 	@RequestMapping(value = "/gps/eventos", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<List<ReponseEventoAlgVO>> saveListaEventosGps(
-			@RequestBody List<EventoAlgVO> listaEventoAlgVO) throws NotFoundHttpResponse, OKHttpResponse {
-		
+			@RequestBody List<EventoAlgVO> listaEventoAlgVO) throws NotFoundHttpResponse, OKHttpResponse, ParseException, SQLException, NamingException {
 		logger.info("/coordenadas:::Tamaño de Lista[{}]", listaEventoAlgVO.size());
-
-		ReponseEventoAlgVO ReponseEventoAlgVO = eventoAlgService.saveListaEventoAlg(listaEventoAlgVO, 0);
+		ReponseEventoAlgVO ReponseEventoAlgVO = eventoAlgService.saveArrayEvent(listaEventoAlgVO, 0);
 		throw new OKHttpResponse(ReponseEventoAlgVO.getDescripcion(), ReponseEventoAlgVO.getCodigoHttp()+NumeroServicio.SERVICIO2.getNumServicio(), ReponseEventoAlgVO.getListaEventoAlgVO());
 	}
 	
 	@RequestMapping(value = "/gps/eventosHistorico", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<List<ReponseEventoAlgVO>> saveListaEventosHistoricoGps(
-			@RequestBody List<EventoAlgVO> listaEventoAlgVO) throws NotFoundHttpResponse, OKHttpResponse {
-		ReponseEventoAlgVO ReponseEventoAlgVO = eventoAlgService.saveListaEventoAlg(listaEventoAlgVO, 1);
+			@RequestBody List<EventoAlgVO> listaEventoAlgVO) throws NotFoundHttpResponse, OKHttpResponse, ParseException, SQLException, NamingException {
+		ReponseEventoAlgVO ReponseEventoAlgVO = eventoAlgService.saveArrayEvent(listaEventoAlgVO, 1);
 		throw new OKHttpResponse(ReponseEventoAlgVO.getDescripcion(), ReponseEventoAlgVO.getCodigoHttp()+NumeroServicio.SERVICIO2.getNumServicio(), ReponseEventoAlgVO.getListaEventoAlgVO());
 	}
 	
@@ -87,7 +76,7 @@ public class EventosAlgRestController {
 		throw new OKHttpResponse(response.getDescripcion(), response.getCodigoHttp()+NumeroServicio.SERVICIO3.getNumServicio(), objectResultbitac);
 	}
 	
-	@RequestMapping(value = "/gps/evento/v2", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/gps/evento", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<ReponseEventoAlgVO> saveEvento(@RequestBody EventoAlgVO eventoAlgVO)
 			throws NotFoundHttpResponse, OKHttpResponse, BusinessHttpResponse, BadRequestHttpResponse, SQLException, NamingException {
 		logger.info("/coordenada:::Longitud[{}]:::Latitud[{}]", eventoAlgVO.getLongitudGps(), eventoAlgVO.getLatitudGps());

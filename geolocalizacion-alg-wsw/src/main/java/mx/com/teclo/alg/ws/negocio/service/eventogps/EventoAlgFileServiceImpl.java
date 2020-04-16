@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.NamingException;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,12 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import mx.com.teclo.alg.ws.persistencia.hibernate.dao.dispositivosmoviles.DispositivoMovilTipoDAO;
-import mx.com.teclo.alg.ws.persistencia.hibernate.dao.empleados.EmpleadoDAO;
-import mx.com.teclo.alg.ws.persistencia.hibernate.dao.parametro.ParametroDAO;
 import mx.com.teclo.alg.ws.persistencia.hibernate.dto.dispositivosmoviles.DispositivoMovilTipoDTO;
-import mx.com.teclo.alg.ws.persistencia.hibernate.dto.hh.empleados.EmpleadosDTO;
-import mx.com.teclo.alg.ws.persistencia.hibernate.dto.hh.parametro.ParametroDTO;
 import mx.com.teclo.alg.ws.persistencia.vo.hh.dispositivosmoviles.DispositivoMovilTipoVO;
 import mx.com.teclo.alg.ws.persistencia.vo.hh.eventogps.EventoAlgVO;
 import mx.com.teclo.alg.ws.persistencia.vo.hh.eventogps.TipoEventoAlgVO;
@@ -49,7 +43,6 @@ import mx.com.teclo.alg.ws.persistencia.vo.hh.layout.LayoutVO;
 import mx.com.teclo.alg.ws.persistencia.vo.hh.parametro.ParametroVO;
 import mx.com.teclo.arquitectura.ortogonales.responsehttp.BadRequestHttpResponse;
 import mx.com.teclo.arquitectura.ortogonales.responsehttp.BusinessHttpResponse;
-import mx.com.teclo.arquitectura.ortogonales.util.ResponseConverter;
 import mx.com.teclo.smm.wsw.util.bd.ConnectionUtilBd;
 import mx.com.teclo.smm.wsw.util.dataType.DataTypeValidator;
 import mx.com.teclo.smm.wsw.util.google.ServicioGoogle;
@@ -75,19 +68,10 @@ public class EventoAlgFileServiceImpl implements EventoAlgFileService{
 	private EventoAlgService eventoAlgService;
 	
 	@Autowired
-	private EventoAlgFileService eventoAlgFileService;
-	
-	@Autowired
-	private DispositivoMovilTipoDAO dispositivoMovilTipoDAO;
-	
-	@Autowired
 	private ConnectionUtilBd conection;
 	
 	@Autowired
-	private ParametroDAO parametroDAO;
-	
-	@Autowired
-	private EmpleadoDAO empleadoDAO;
+	private ServicioGoogle servicioGoogle;
 	
 	private static final long  MEGABYTE = 1024L * 1024L;
 	
@@ -330,6 +314,7 @@ public class EventoAlgFileServiceImpl implements EventoAlgFileService{
 						registersError ++;
 						errorsLine.add(line);
 					}else {
+						mapSingle.put("historico", 0);
 						successLine.add(mapSingle);
 					}
 				}else {
@@ -390,14 +375,6 @@ public class EventoAlgFileServiceImpl implements EventoAlgFileService{
 		return objectReturn;
 	}
 
-	@Transactional
-	private DispositivoMovilTipoVO filterTypeDevice(String cdEvent) {
-		DispositivoMovilTipoDTO dispo = dispositivoMovilTipoDAO.activoByCode(cdEvent);
-		DispositivoMovilTipoVO voReturn = new DispositivoMovilTipoVO();
-		ResponseConverter.copiarPropriedades(voReturn, dispo);
-		return voReturn;
-	}
-	
 	@Override
 	public DispositivoMovilTipoDTO filterTypeDevice(List<DispositivoMovilTipoVO> l, String cdTipoDispositivo) {
 		if(cdTipoDispositivo == null || l.isEmpty())
@@ -425,20 +402,12 @@ public class EventoAlgFileServiceImpl implements EventoAlgFileService{
 		return vectorReturn;
 	}
 
-	@Transactional
-	private ParametroVO restriction(String cd) {
-		ParametroDTO pDTO = parametroDAO.restrictionByCode(cd);
-		ParametroVO pVO = new ParametroVO();
-		ResponseConverter.copiarPropriedades(pVO, pDTO);
-		return pVO;
-	} 
 	
-	@Transactional
 	@Override
 	public ReponseEventoAlgVO saveEvent(EventoAlgVO eventoVO) throws BadRequestHttpResponse, SQLException, NamingException {
 		//List<TipoEventoAlgDTO> tipoEventosAlg = tipoEventoAlgDAO.getTipoEventosActivos();
 		List<TipoEventoAlgVO> tipoEventosAlg = collectionService.typeEvent();
-		ParametroVO pVO = restriction("TALG004_DIR");
+		ParametroVO pVO = eventoAlgServiceOptBDService.restriction("TALG004_DIR");
 		boolean searchDir = (pVO != null && pVO.getTxValor() != null && (pVO.getTxValor().equals("1"))) ? true: true;
 		
 		if(!eventoAlgService.validObject(eventoVO, tipoEventosAlg)){
@@ -451,39 +420,28 @@ public class EventoAlgFileServiceImpl implements EventoAlgFileService{
 		String descripcionMensaje = Mensajes.MSJ_WARNING_OBJECT_NOT_FOUND.getMensaje();
 		int flagCatalogos = 0;
 		ReponseEventoAlgVO response = new ReponseEventoAlgVO();
-		//EventoAlgDTO eventoDTO=null;
 	
-        //eventoDTO = ResponseConverter.copiarPropiedadesFull(eventoVO, EventoAlgDTO.class);
-        EmpleadosDTO empleado = empleadoDAO.findUserByPlaca(eventoVO.getPlacaOficial());
-        Long empId = (empleado == null ? EMPLEADO_DEFAULT : empleado.getEmpId());
+		Long idEmp = eventoAlgServiceOptBDService.idEmpleado(eventoVO.getPlacaOficial());
+        Long empId = (idEmp == null ? EMPLEADO_DEFAULT : idEmp);
         
         eventoVO.setFechaCreacion(Calendar.getInstance().getTime());
         eventoVO.setUltimaModificacion(Calendar.getInstance().getTime());
         
-        /*
-        eventoVO.setIdEmpleado(empId);
-		eventoDTO.setEstatusEvento(1);
-		eventoDTO.setFechaCreacion(Calendar.getInstance().getTime());
-		eventoDTO.setUltimaModificacion(eventoDTO.getFechaCreacion());
-		eventoDTO.setCreadoPor(empId);
-		eventoDTO.setModificadoPor(empId);
-		eventoDTO.setHistorico(0);*/
-		//Se consulta direccion en google maps 
-		//eventoDTO.setDireccion(ServicioGoogle.buscarDireccion(eventoVO.getLatitudGps(),eventoVO.getLongitudGps()));
-		//eventoDTO.setDireccion("--");
+        eventoVO.setCreadoPor(empId);
+        eventoVO.setModificadoPor(empId);
+		
+        //Se consulta direccion en google maps
 		// MIENTRAS LA BANDERA Y EL PARÁMETRO EXISTAN ENTONCES DE BUSCAR LA DIRECCIÓN
-		String txtDir = null; 
+		String txtDir = "--"; 
 		if(searchDir) {
-			txtDir = ServicioGoogle.buscarDireccion(eventoVO.getLatitudGps(),eventoVO.getLongitudGps());
+			txtDir = servicioGoogle.buscarDireccion(eventoVO.getLatitudGps(),eventoVO.getLongitudGps());
 			if(txtDir != null) {
-				//mapSingle.put("direccion", txtDir);
 				eventoVO.setDireccion(txtDir);
 			}else {					
 				eventoVO.setDireccion("--");
 			}
 		}
-		// TipoEventoAlgDTO tipoEventoDTO = tipoEventoAlgDAO.activoByCode(eventoVO.getTipoEventoCodigo());
-		TipoEventoAlgVO teVO = eventoAlgFileService.filterTypeEvent(tipoEventosAlg, eventoVO.getTipoEventoCodigo());
+		TipoEventoAlgVO teVO = filterTypeEvent(tipoEventosAlg, eventoVO.getTipoEventoCodigo());
 		Boolean foundTipoEvento = teVO != null; 
 		if(!foundTipoEvento){
 			eventoVO.setTipoEventoAlg(teVO);
@@ -495,14 +453,10 @@ public class EventoAlgFileServiceImpl implements EventoAlgFileService{
 			eventoVO.setTipoEventoAlg(teNVO);
 		}
 		
-		
-		//DispositivoMovilTipoDTO dispo = dispositivoMovilTipoDAO.activoByCode(eventoVO.getTipoDispositivoCodigo());
-		//DispositivoMovilTipoDTO dtDTO = eventoAlgFileService.filterTypeDevice(typeDevice, eventoVO.getTipoDispositivoCodigo());
-		DispositivoMovilTipoVO tdVO = filterTypeDevice(eventoVO.getTipoDispositivoCodigo());
+		DispositivoMovilTipoVO tdVO = eventoAlgServiceOptBDService.filterTypeDevice(eventoVO.getTipoDispositivoCodigo());
 		Boolean foundTipoDispositivo = tdVO != null; 
 		if(!foundTipoDispositivo){
 			flagCatalogos += 1;
-			//eventoDTO.setTipoDispositivoMovil(dispositivoMovilTipoDAO.activoByCode(DEFUALT_TIPO_DISP));
 			eventoVO.setTipoDispositivoMovil(tdVO);
 			if(flagCatalogos > 0) {
 				descripcionMensaje += ", " + Catalogos.TIPO_DISPOSITIVO.getNombreCatalogo();
@@ -562,12 +516,8 @@ public class EventoAlgFileServiceImpl implements EventoAlgFileService{
     	con.commit();
     	stmt.close();
 		con.close();
-		//eventoAlgDAO.save(eventoDTO);
-		//response.setEventoAlgVO(ResponseConverter.copiarPropiedadesFull(eventoDTO , EventoAlgVO.class));
 		response.setEventoAlgVO(eventoVO);
 		response.getEventoAlgVO().setTipoEventoAlg(teVO);
-		//DispositivoMovilTipoVO dtVO = new DispositivoMovilTipoVO();
-		//ResponseConverter.copiarPropriedades(dtVO, dtDTO);
 		response.getEventoAlgVO().setTipoDispositivoMovil(tdVO);
 		if (eventoVO != null){
 			response.setCodigoHttp(Codigos.CREATE.getCodigoId());
