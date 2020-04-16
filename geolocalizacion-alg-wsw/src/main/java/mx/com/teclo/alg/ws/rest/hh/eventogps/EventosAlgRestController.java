@@ -61,7 +61,7 @@ public class EventosAlgRestController {
 		throw new OKHttpResponse(ReponseEventoAlgVO.getDescripcion(), ReponseEventoAlgVO.getCodigoHttp()+NumeroServicio.SERVICIO2.getNumServicio(), ReponseEventoAlgVO.getListaEventoAlgVO());
 	}
 	
-	@RequestMapping(value = "/gps/eventos/v2", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/gps/archivo", method = RequestMethod.POST, produces = "application/json")
 	public @ResponseBody RequestEventoAlgVO processFile (@RequestParam(value = "file") MultipartFile file,
 									  @RequestParam(value = "data", required = false) String archivoVO) throws BusinessHttpResponse, IOException, ParseException, SQLException, NamingException, OKHttpResponse {
 		Map<String, Object> map = null;
